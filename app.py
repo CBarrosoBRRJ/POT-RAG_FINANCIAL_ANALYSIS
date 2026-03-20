@@ -452,14 +452,10 @@ def montar_contexto_memoria(pergunta_atual: str, limite: int = 8) -> str:
     )
 
 
-# Container para mensagens
-chat_container = st.container()
-
 # Renderizar mensagens do histórico
-with chat_container:
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
 # Input do usuário
 prompt = st.chat_input("Faça sua consulta sobre IPCA, SELIC, câmbio ou euro...")
@@ -473,33 +469,10 @@ if prompt:
     if prompt:
         # Adicionar mensagem do usuário ao histórico
         st.session_state.messages.append({"role": "user", "content": prompt})
-
-        # Renderizar mensagem do usuário com streaming natural (rápido)
         with st.chat_message("user"):
-            user_placeholder = st.empty()
-            texto_usuario = ""
+            st.markdown(prompt)
 
-            for char in prompt:
-                texto_usuario += char
-                user_placeholder.markdown(texto_usuario + "▌")
-
-                # Velocidade rápida para input do usuário
-                if char in ['.', '!', '?']:
-                    time.sleep(0.06)
-                elif char in [',', ':', ';']:
-                    time.sleep(0.03)
-                elif char == ' ':
-                    time.sleep(0.008)
-                else:
-                    time.sleep(0.003)
-
-            # Mostrar texto final do usuário sem cursor
-            user_placeholder.markdown(prompt)
-
-        # AGUARDAR usuário terminar antes de processar resposta
-        time.sleep(0.3)
-
-        # Processar resposta (só inicia após mensagem do usuário completa)
+        # Processar resposta
         try:
             pergunta_ctx = montar_contexto_memoria(prompt, limite=8)
             resposta_raw = cadeia(pergunta_ctx)
@@ -507,31 +480,10 @@ if prompt:
         except Exception as e:
             resposta_texto = f"Erro ao processar consulta: {str(e)}"
 
-        # Renderizar resposta com streaming (mais devagar que usuário)
         with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            texto_exibido = ""
-
-            # Stream por caractere para preservar formatação markdown
-            for char in resposta_texto:
-                texto_exibido += char
-                message_placeholder.markdown(texto_exibido + "▌", unsafe_allow_html=True)
-
-                # Pausas moderadas para leitura confortável
-                if char in ['.', '!', '?']:
-                    time.sleep(0.15)
-                elif char in [',', ':', ';']:
-                    time.sleep(0.08)
-                elif char == ' ':
-                    time.sleep(0.012)
-                else:
-                    time.sleep(0.006)
-
-            # Mostrar texto final sem cursor
-            message_placeholder.markdown(resposta_texto, unsafe_allow_html=True)
+            st.markdown(resposta_texto, unsafe_allow_html=True)
 
         # Adicionar resposta ao histórico
         st.session_state.messages.append(
             {"role": "assistant", "content": resposta_texto}
         )
-
