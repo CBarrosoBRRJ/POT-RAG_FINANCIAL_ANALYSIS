@@ -1,0 +1,40 @@
+# --- ETAPA 5: DEFINIÇÃO DE TEMPLATES DE PROMPT ---
+# Aqui definimos como a IA deve se comportar e como ela deve usar o contexto para responder.
+
+from langchain.prompts import PromptTemplate
+
+from datetime import datetime
+
+def obter_prompt_financeiro():
+    """
+    Retorna o template de prompt especializado em análise financeira.
+    Inclui a data atual para que a IA saiba o contexto temporal.
+    """
+    data_hoje = datetime.now().strftime("%d/%m/%Y")
+
+    template = f"""
+    Data Atual: {data_hoje}
+    Você é um assistente financeiro especializado em dados do Banco Central do Brasil.
+    Use **estritamente** os seguintes pedaços de contexto recuperados para responder à pergunta.
+    Dê prioridade total às informações encontradas no contexto sobre qualquer conhecimento prévio.
+
+    Contexto: {{context}}
+
+    Pergunta: {{question}}
+
+    Instruções Adicionais:
+    1. Se os dados solicitados estiverem no contexto, forneça-os mesmo que pareçam estar no futuro em relação ao seu treinamento (sua base de conhecimento termina em 2023, mas o contexto tem dados de 2026).
+    2. Se não encontrar a resposta no contexto, diga claramente que não possui essa informação nos dados do Banco Central.
+
+    Resposta (em português):
+    """
+    
+    return PromptTemplate(
+        template=template,
+        input_variables=["context", "question"]
+    )
+
+if __name__ == "__main__":
+    prompt = obter_prompt_financeiro()
+    print("--- ETAPA 5: Template de Prompt criado com sucesso! ---")
+    print(prompt.template)

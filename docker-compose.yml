@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pot-rag-financial-analysis
+    env_file:
+      - .env
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data/raw:/app/data/raw
+      - ./data/vector_db:/app/data/vector_db
+    restart: unless-stopped

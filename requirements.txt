@@ -1,0 +1,15 @@
+langchain
+langchain-community
+langchain-huggingface
+langchain-groq
+langchain-experimental
+langchain-text-splitters
+chromadb
+pandas
+requests
+tiktoken
+python-dotenv
+streamlit
+sentence-transformers
+huggingface-hub
+torch
