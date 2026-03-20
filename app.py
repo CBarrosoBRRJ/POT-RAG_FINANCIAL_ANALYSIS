@@ -619,16 +619,17 @@ if not prompt:
 if prompt:
     prompt = prompt.strip()
     if prompt:
-        # Adicionar mensagem do usuário ao histórico
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        # Mostrar mensagem do usuário com efeito de digitação
         with st.chat_message("user"):
-            # Efeito de digitação para mensagem do usuário
             def gerar_stream_user():
                 for char in prompt:
                     yield char
                     time.sleep(0.005)
 
             st.write_stream(gerar_stream_user())
+
+        # Adicionar ao histórico após renderizar
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
         # Processar resposta com efeito de digitação
         with st.chat_message("assistant"):
@@ -643,13 +644,14 @@ if prompt:
                         yield char
                         time.sleep(0.01)
 
-                resposta_completa = st.write_stream(gerar_stream())
+                st.write_stream(gerar_stream())
+                resposta_completa = resposta_texto
 
             except Exception as e:
                 resposta_completa = f"Erro ao processar consulta: {str(e)}"
                 st.markdown(resposta_completa)
 
-        # Adicionar resposta ao histórico
+        # Adicionar resposta ao histórico após renderizar
         st.session_state.messages.append(
             {"role": "assistant", "content": resposta_completa}
         )
