@@ -20,15 +20,32 @@ st.markdown(
     """
 <style>
     /* Global Styles */
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    [data-testid="stApp"] {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
     [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-        overflow-x: hidden;
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    .main {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
     }
 
     .main .block-container {
         max-width: 1200px;
         width: 100%;
         padding: 2rem 1rem 1rem 1rem;
+        overflow-x: hidden !important;
     }
 
     [data-testid="stAppViewBlockContainer"] {
@@ -36,20 +53,53 @@ st.markdown(
         width: 100%;
         padding-left: 1rem;
         padding-right: 1rem;
-    }
-
-    html, body, [data-testid="stApp"], .main {
-        overflow-x: hidden;
+        overflow-x: hidden !important;
     }
 
     /* Sidebar */
     section[data-testid="stSidebar"] {
         background: #161b22;
         border-right: 1px solid #30363d;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        max-width: 100% !important;
+        height: 100vh !important;
     }
 
     section[data-testid="stSidebar"] > div {
-        padding-top: 2rem;
+        padding: 1.5rem 1rem !important;
+        overflow-x: hidden !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        height: auto !important;
+    }
+
+    section[data-testid="stSidebar"] * {
+        max-width: 100% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+
+    section[data-testid="stSidebar"] h2 {
+        font-size: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    section[data-testid="stSidebar"] h3 {
+        font-size: 0.9rem !important;
+        margin: 1rem 0 0.5rem 0 !important;
+    }
+
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] li {
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 0.4rem !important;
+    }
+
+    section[data-testid="stSidebar"] ul {
+        padding-left: 1.2rem !important;
+        margin: 0.5rem 0 !important;
     }
 
     /* Header */
@@ -96,6 +146,8 @@ st.markdown(
         width: 100% !important;
         max-width: 100% !important;
         overflow-wrap: anywhere !important;
+        word-wrap: break-word !important;
+        overflow-x: hidden !important;
     }
 
     [data-testid="stChatMessageContent"] {
@@ -104,6 +156,14 @@ st.markdown(
         width: 100% !important;
         max-width: 100% !important;
         overflow-wrap: anywhere !important;
+        word-wrap: break-word !important;
+        overflow-x: hidden !important;
+    }
+
+    [data-testid="stChatMessageContent"] * {
+        max-width: 100% !important;
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
     }
 
     /* User messages */
@@ -204,7 +264,7 @@ st.markdown(
     @media (max-width: 1100px) {
         .main .block-container,
         [data-testid="stAppViewBlockContainer"] {
-            max-width: 1000px;
+            max-width: 100% !important;
             padding-left: 0.875rem;
             padding-right: 0.875rem;
         }
@@ -218,6 +278,7 @@ st.markdown(
     @media (max-width: 900px) {
         .main .block-container,
         [data-testid="stAppViewBlockContainer"] {
+            max-width: 100% !important;
             padding-left: 0.75rem;
             padding-right: 0.75rem;
         }
@@ -237,10 +298,12 @@ st.markdown(
         }
 
         .main .block-container {
+            max-width: 100% !important;
             padding: 1rem 0.5rem;
         }
 
         [data-testid="stAppViewBlockContainer"] {
+            max-width: 100% !important;
             padding-left: 0.5rem;
             padding-right: 0.5rem;
         }
@@ -252,6 +315,10 @@ st.markdown(
         .stChatMessage {
             padding: 0.875rem !important;
         }
+
+        section[data-testid="stSidebar"] {
+            max-width: 280px !important;
+        }
     }
 
     @media (max-width: 480px) {
@@ -262,6 +329,17 @@ st.markdown(
         .chat-header p,
         [data-testid="stChatMessageContent"] {
             font-size: 0.88rem !important;
+        }
+
+        .main .block-container,
+        [data-testid="stAppViewBlockContainer"] {
+            max-width: 100% !important;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        section[data-testid="stSidebar"] {
+            max-width: 240px !important;
         }
     }
 </style>
@@ -448,9 +526,6 @@ com dados oficiais do Banco Central do Brasil.
         st.session_state.pending_prompt = random.choice(perguntas)
         st.rerun()
 
-    # Espaçador para empurrar créditos para o final
-    st.markdown("<br>" * 10, unsafe_allow_html=True)
-
     st.divider()
 
     st.markdown(
@@ -547,20 +622,34 @@ if prompt:
         # Adicionar mensagem do usuário ao histórico
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
-            st.markdown(prompt)
+            # Efeito de digitação para mensagem do usuário
+            def gerar_stream_user():
+                for char in prompt:
+                    yield char
+                    time.sleep(0.005)
 
-        # Processar resposta
-        try:
-            pergunta_ctx = montar_contexto_memoria(prompt, limite=8)
-            resposta_raw = cadeia(pergunta_ctx)
-            resposta_texto = resposta_raw.get("result", "Sem resposta disponível")
-        except Exception as e:
-            resposta_texto = f"Erro ao processar consulta: {str(e)}"
+            st.write_stream(gerar_stream_user())
 
+        # Processar resposta com efeito de digitação
         with st.chat_message("assistant"):
-            st.markdown(resposta_texto, unsafe_allow_html=True)
+            try:
+                pergunta_ctx = montar_contexto_memoria(prompt, limite=8)
+                resposta_raw = cadeia(pergunta_ctx)
+                resposta_texto = resposta_raw.get("result", "Sem resposta disponível")
+
+                # Efeito de digitação humanizado
+                def gerar_stream():
+                    for char in resposta_texto:
+                        yield char
+                        time.sleep(0.01)
+
+                resposta_completa = st.write_stream(gerar_stream())
+
+            except Exception as e:
+                resposta_completa = f"Erro ao processar consulta: {str(e)}"
+                st.markdown(resposta_completa)
 
         # Adicionar resposta ao histórico
         st.session_state.messages.append(
-            {"role": "assistant", "content": resposta_texto}
+            {"role": "assistant", "content": resposta_completa}
         )
