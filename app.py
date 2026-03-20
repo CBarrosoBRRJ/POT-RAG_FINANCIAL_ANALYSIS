@@ -22,11 +22,24 @@ st.markdown(
     /* Global Styles */
     [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+        overflow-x: hidden;
     }
 
     .main .block-container {
         max-width: 1200px;
+        width: 100%;
         padding: 2rem 1rem 1rem 1rem;
+    }
+
+    [data-testid="stAppViewBlockContainer"] {
+        max-width: 1200px;
+        width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    html, body, [data-testid="stApp"], .main {
+        overflow-x: hidden;
     }
 
     /* Sidebar */
@@ -45,6 +58,8 @@ st.markdown(
         padding: 1.5rem 1rem 2rem 1rem;
         border-bottom: 1px solid #30363d;
         margin-bottom: 2rem;
+        width: 100%;
+        overflow-wrap: anywhere;
     }
 
     .chat-header h1 {
@@ -59,7 +74,7 @@ st.markdown(
         color: #8b949e;
         font-size: 0.95rem;
         margin: 0.5rem auto;
-        max-width: 700px;
+        max-width: min(700px, 100%);
         line-height: 1.6;
     }
 
@@ -78,11 +93,17 @@ st.markdown(
         margin-bottom: 1rem !important;
         border-radius: 12px !important;
         box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-wrap: anywhere !important;
     }
 
     [data-testid="stChatMessageContent"] {
         font-size: 0.95rem !important;
         line-height: 1.6 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-wrap: anywhere !important;
     }
 
     /* User messages */
@@ -121,6 +142,7 @@ st.markdown(
 
     .stChatInput {
         max-width: 900px !important;
+        width: 100% !important;
         margin: 0 auto !important;
     }
 
@@ -128,6 +150,7 @@ st.markdown(
         background: #161b22 !important;
         border: 1.5px solid #30363d !important;
         border-radius: 12px !important;
+        width: 100% !important;
     }
 
     .stChatInput input {
@@ -178,6 +201,36 @@ st.markdown(
     }
 
     /* Responsive */
+    @media (max-width: 1100px) {
+        .main .block-container,
+        [data-testid="stAppViewBlockContainer"] {
+            max-width: 1000px;
+            padding-left: 0.875rem;
+            padding-right: 0.875rem;
+        }
+
+        .chat-header {
+            padding: 1.25rem 0.75rem 1.5rem 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .main .block-container,
+        [data-testid="stAppViewBlockContainer"] {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .chat-header h1 {
+            font-size: 1.65rem;
+        }
+
+        .chat-header p {
+            font-size: 0.9rem;
+        }
+    }
+
     @media (max-width: 768px) {
         .chat-header h1 {
             font-size: 1.5rem;
@@ -185,6 +238,30 @@ st.markdown(
 
         .main .block-container {
             padding: 1rem 0.5rem;
+        }
+
+        [data-testid="stAppViewBlockContainer"] {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .chat-header {
+            padding: 1rem 0.25rem 1.25rem 0.25rem;
+        }
+
+        .stChatMessage {
+            padding: 0.875rem !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .chat-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .chat-header p,
+        [data-testid="stChatMessageContent"] {
+            font-size: 0.88rem !important;
         }
     }
 </style>
